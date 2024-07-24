@@ -1,0 +1,24 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "WFIntegrations",
+	"Description": "Integrations of different Wise Feline products with each other",
+	"Category": "Other",
+	"CreatedBy": "NoOpArmy",
+	"CreatedByURL": "",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"CanContainContent": true,
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "WFIntegrations",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	]
+}
