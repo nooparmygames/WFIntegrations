@@ -1,10 +1,9 @@
 // Copyright NoOpArmy 2024
 
-
 #include "WFInfluenceMapConsideration.h"
 #include "WFInfluenceMapsSubsystem.h"
 #include "WFInfluenceMap.h"
-#include "AIModule/Classes/BehaviorTree/BlackboardComponent.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 float UWFInfluenceMapConsideration::GetValue_Implementation(const AActor* InTargetActor)
 {
