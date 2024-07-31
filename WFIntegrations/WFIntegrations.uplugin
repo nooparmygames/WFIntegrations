@@ -4,21 +4,27 @@
 	"VersionName": "1.0",
 	"FriendlyName": "WFIntegrations",
 	"Description": "Integrations of different Wise Feline products with each other",
-	"Category": "Other",
-	"CreatedBy": "NoOpArmy",
-	"CreatedByURL": "",
-	"DocsURL": "",
-	"MarketplaceURL": "",
+	"Category": "AI",
+	"CreatedBy": "NoOp Army",
+	"CreatedByURL": "https://www.nooparmygames.com/",
+	"DocsURL": "https://www.nooparmygames.com/WF-UtilityAI-Unreal/",
+	"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/67f2fe104ebb4bfe8ae556b21e7d771b",
 	"SupportURL": "",
 	"CanContainContent": true,
-	"IsBetaVersion": false,
-	"IsExperimentalVersion": false,
-	"Installed": false,
+	"EngineVersion": "5.4.0",
+	"Installed": true,
 	"Modules": [
-		{
-			"Name": "WFIntegrations",
-			"Type": "Runtime",
-			"LoadingPhase": "Default"
-		}
-	]
+    {
+      "Name": "WFIntegrations",
+      "Type": "Runtime",
+      "LoadingPhase": "Default",
+      "WhitelistPlatforms": [
+        "Win64",
+        "Linux",
+        "Mac",
+        "Android",
+        "IOS"
+      ]
+    }
+  ]
 }
