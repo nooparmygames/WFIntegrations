@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+// Copyright NoOpArmy 2024
 
 #pragma once
 

@@ -1,35 +1,45 @@
 {
-	"FileVersion": 3,
-	"Version": 1,
-	"VersionName": "1.0",
-	"FriendlyName": "WFIntegrations",
-	"Description": "Integrations of different Wise Feline products with each other",
-	"Category": "Other",
-	"CreatedBy": "NoOpArmy",
-	"CreatedByURL": "https://nooparmygames.com",
-	"DocsURL": "https://nooparmygames.com",
-	"MarketplaceURL": "",
-	"SupportURL": "https://nooparmygames.com",
-	"EngineVersion": "5.4.0",
-	"CanContainContent": true,
-	"Installed": true,
-	"Modules": [
-		{
-			"Name": "WFIntegrations",
-			"Type": "Runtime",
-			"LoadingPhase": "Default"
-		}
-	],
-	"IsBetaVersion": false,
-	"IsExperimentalVersion": false,
-	"Plugins": [
-		{
-			"Name": "WiseFeline",
-			"Enabled": true
-		},
-		{
-			"Name": "WiseFelineInfluenceMaps",
-			"Enabled": true
-		}
-	]
+  "FileVersion": 3,
+  "Version": 1,
+  "VersionName": "1.0",
+  "FriendlyName": "WF Integrations",
+  "Description": "Integrations of different Wise Feline products with each other",
+  "Category": "Other",
+  "CreatedBy": "NoOpArmy",
+  "CreatedByURL": "https://nooparmygames.com",
+  "DocsURL": "https://nooparmygames.com/WF-UtilityAI-Unreal",
+  "MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/67f2fe104ebb4bfe8ae556b21e7d771b",
+  "MarketplaceURL": "",
+  "SupportURL": "https://nooparmygames.com",
+  "EngineVersion": "5.6.0",
+  "CanContainContent": true,
+  "Installed": true,
+  "Modules": [
+    {
+      "Name": "WFIntegrations",
+      "Type": "Runtime",
+      "LoadingPhase": "Default",
+      "WhitelistPlatforms": [
+        "Win64",
+        "Linux",
+        "Mac",
+        "Android",
+        "IOS"
+      ]
+    }
+  ],
+  "IsBetaVersion": false,
+  "IsExperimentalVersion": false,
+  "Plugins": [
+    {
+      "Name": "WiseFeline",
+      "Enabled": true,
+      "MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/67f2fe104ebb4bfe8ae556b21e7d771b"
+    },
+    {
+      "Name": "WiseFelineInfluenceMaps",
+      "Enabled": true,
+      "MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/33ab7587693e446e8443f20f0304c0c3"
+    }
+  ]
 }
