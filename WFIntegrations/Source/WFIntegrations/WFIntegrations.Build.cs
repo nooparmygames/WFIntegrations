@@ -27,6 +27,9 @@ public class WFIntegrations : ModuleRules
             {
                 "Core",
                 "AIModule",
+                "GameplayTags",
+                "GameplayAbilities",
+                "SmartObjectsModule",
                 "WiseFeline",
                 "WiseFelineInfluenceMaps",
 				// ... add other public dependencies that you statically link with here ...
@@ -39,7 +42,8 @@ public class WFIntegrations : ModuleRules
             {
                 "CoreUObject",
                 "Engine",
-                "SmartObjectsModule",
+                "GameplayTasks",
+                "GameplayBehaviorSmartObjectsModule",
                 "Slate",
                 "SlateCore",
 				// ... add private dependencies that you statically link with here ...	
