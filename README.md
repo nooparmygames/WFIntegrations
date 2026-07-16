@@ -9,4 +9,14 @@ Supported integrations include:
 - [Wise Feline Influence Maps](https://www.fab.com/listings/de2fe0f1-e173-4646-b8c4-ebe724c41326)
 - Smart Objects
 - Gameplay Ability System (GAS)
-- 
+
+# Integrations in the main plugin
+
+Some of the integrations which don't require dependencies live in the main plugin.
+They include:
+
+- EQS
+- Behavior Trees
+- Perception System
+- Blackboards
+- Gameplay Tags
