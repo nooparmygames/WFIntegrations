@@ -18,7 +18,7 @@
       "Name": "WFIntegrations",
       "Type": "Runtime",
       "LoadingPhase": "Default",
-      "WhitelistPlatforms": [
+      "PlatformAllowList": [
         "Win64",
         "Linux",
         "Mac",
@@ -33,12 +33,12 @@
     {
       "Name": "WiseFeline",
       "Enabled": true,
-      "MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/67f2fe104ebb4bfe8ae556b21e7d771b"
+      "MarketplaceURL": "com.epicgames.launcher://ue/Fab/product/3e2af863-d8f8-43c8-83e3-f888cf59357b"
     },
     {
       "Name": "WiseFelineInfluenceMaps",
       "Enabled": true,
-      "MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/33ab7587693e446e8443f20f0304c0c3"
+      "MarketplaceURL": "com.epicgames.launcher://ue/Fab/product/889ea19e-5903-4a98-9473-8fba954e0d3c"
     },
     {
       "Name": "SmartObjects",
