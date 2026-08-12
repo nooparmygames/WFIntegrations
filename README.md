@@ -7,13 +7,24 @@ projects without a C++ compiler installed can use the plugin too.
 
 ## Downloads
 
-| Engine | Download | Notes |
-|---|---|---|
-| UE 5.8 | [wfint58100.zip](https://www.nooparmygames.com/wfdownloads/wfint58100.zip) | Fully precompiled, including packaged-game binaries. Works for Blueprint-only projects with no compiler at all. |
-| UE 5.7 | [wfint57100.zip](https://www.nooparmygames.com/wfdownloads/wfint57100.zip) | Precompiled editor binaries only. Blueprint-only projects can use the editor, but still need a C++ compiler to package a game. |
-| UE 5.6 | [wfint56100.zip](https://www.nooparmygames.com/wfdownloads/wfint56100.zip) | Precompiled editor binaries only. Blueprint-only projects can use the editor, but still need a C++ compiler to package a game. |
+Every download is the fully precompiled plugin - editor binaries plus Development and Shipping
+game binaries - so a Blueprint-only project can use it in the editor *and* package a game with no
+C++ compiler installed.
+
+| Engine | Download |
+|---|---|
+| UE 5.8 | [wfint58100.zip](https://www.nooparmygames.com/wfdownloads/wfint58100.zip) |
+| UE 5.7 | [wfint57100.zip](https://www.nooparmygames.com/wfdownloads/wfint57100.zip) |
+| UE 5.6 | [wfint56100.zip](https://www.nooparmygames.com/wfdownloads/wfint56100.zip) |
 
 Unzip the download into your project's `Plugins` folder (so you end up with `Plugins/WFIntegrations`) and enable the plugin.
+
+Two things worth knowing:
+
+- The precompiled binaries are **Windows (Win64) only**. The plugin supports Linux, Mac, Android and
+  iOS as well, but those are built from source, so targeting them needs a C++ project and a compiler.
+- Pick the download that matches your engine's **minor** version. Each one works with every hotfix of
+  that version, so the 5.7 download is good for any 5.7.x.
 
 ## Dependencies
 
