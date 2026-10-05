@@ -59,6 +59,18 @@ and enabled for the plugin to load:
 
 - **Influence Map** (consideration) - searches a Wise Feline Influence Map for a value (centered on the controlled actor or a blackboard location) and writes the result to a blackboard key.
 
+The current source adds a `SearchMode` setting. `FirstMatch` keeps the previous behavior and is
+the default. `HighestValue` and `LowestValue` find the area's best value, choosing the cell nearest
+the search center when several cells share it. The selected value must still meet `SearchCondition`
+and `SearchValue`; if it does not, the consideration returns 0. These modes also work with interest
+and self templates.
+
+With Influence Maps 3.2.0, the result written to the blackboard is the cell center. Remove any
+half-cell offset you previously added to that result yourself.
+
+The hosted 1.0 binary downloads above predate these source changes. They will be replaced separately;
+use the source checkout to build the updated consideration in the meantime.
+
 ## Integrations in the main plugin
 
 Some of the integrations which don't require dependencies live in the main plugin.

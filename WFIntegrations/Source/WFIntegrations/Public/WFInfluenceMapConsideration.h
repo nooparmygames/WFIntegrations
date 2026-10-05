@@ -19,6 +19,20 @@ enum class ECenterMode : uint8
 };
 
 /**
+ * Specifies which cell a successful search returns
+ */
+UENUM(BlueprintType)
+enum class EWFInfluenceMapSearchMode : uint8
+{
+	/** The first cell that meets the condition, starting from a random cell of the area. Cheapest, but the cell is rarely the best or the closest one. */
+	FirstMatch,
+	/** The cell with the highest value in the area, if that value meets the condition. Among equal cells the one closest to the search center wins. */
+	HighestValue,
+	/** The cell with the lowest value in the area, if that value meets the condition. Among equal cells the one closest to the search center wins. */
+	LowestValue,
+};
+
+/**
  * Searches the influence map for a value and if successful, puts the result in a blackboard key
  */
 UCLASS()
@@ -47,6 +61,13 @@ public:
 	/** The condition of the search */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WiseFeline")
 	ESearchCondition SearchCondition;
+
+	/**
+	 * Which of the cells meeting the condition to return. HighestValue finds the peak of the influence,
+	 * which is where the actor that stamped it stands, instead of any cell inside its radius.
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WiseFeline")
+	EWFInfluenceMapSearchMode SearchMode = EWFInfluenceMapSearchMode::FirstMatch;
 
 	/** Radius of the search to conduct */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WiseFeline")
