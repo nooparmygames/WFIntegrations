@@ -12,7 +12,6 @@ game binaries - so a Blueprint-only project can use it in the editor *and* packa
 C++ compiler installed.
 
 The links below point to the newly built binaries for the Wise Feline 3.2 release.
-The R2 release upload and public-download verification are still pending.
 
 | Engine | Download |
 |---|---|
