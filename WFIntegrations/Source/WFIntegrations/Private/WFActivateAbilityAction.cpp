@@ -11,8 +11,7 @@ void UWFActivateAbilityAction::OnActivate_Implementation()
 {
 	Super::OnActivate_Implementation();
 
-	if (!IsValid(AbilitySystem) && IsValid(GetControlledActor()))
-		AbilitySystem = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetControlledActor());
+	RefreshAbilitySystem();
 
 	if (!IsValid(AbilitySystem) || AbilityClass == nullptr)
 	{
@@ -27,11 +26,7 @@ void UWFActivateAbilityAction::OnActivate_Implementation()
 	const bool bActivated = AbilitySystem->TryActivateAbilityByClass(AbilityClass, bAllowRemoteActivation);
 	if (!bActivated)
 	{
-		if (AbilityEndedHandle.IsValid())
-		{
-			AbilitySystem->AbilityEndedCallbacks.Remove(AbilityEndedHandle);
-			AbilityEndedHandle.Reset();
-		}
+		UnbindAbilityEnded();
 		Finished();
 		return;
 	}
@@ -43,22 +38,41 @@ void UWFActivateAbilityAction::OnActivate_Implementation()
 
 void UWFActivateAbilityAction::OnAbilityEnded(UGameplayAbility* Ability)
 {
-	if (IsValid(Ability) && AbilityClass != nullptr && Ability->IsA(AbilityClass))
+	if (IsActive() && IsValid(Ability) && AbilityClass != nullptr && Ability->IsA(AbilityClass))
 		Finished();
 }
 
 void UWFActivateAbilityAction::OnDeactivate_Implementation()
 {
 	Super::OnDeactivate_Implementation();
+	UnbindAbilityEnded();
+}
 
+void UWFActivateAbilityAction::UnbindAbilityEnded()
+{
 	if (IsValid(AbilitySystem) && AbilityEndedHandle.IsValid())
 		AbilitySystem->AbilityEndedCallbacks.Remove(AbilityEndedHandle);
 	AbilityEndedHandle.Reset();
 }
 
+void UWFActivateAbilityAction::RefreshAbilitySystem()
+{
+	// The old actor can remain alive after possession changes. Detach from its component first.
+	UnbindAbilityEnded();
+	AbilitySystem = IsValid(GetControlledActor())
+		? UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetControlledActor())
+		: nullptr;
+}
+
 void UWFActivateAbilityAction::OnBeginPlay_Implementation()
 {
 	Super::OnBeginPlay_Implementation();
-	if (IsValid(GetControlledActor()))
-		AbilitySystem = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetControlledActor());
+	RefreshAbilitySystem();
+}
+
+void UWFActivateAbilityAction::OnPossessionChanged_Implementation()
+{
+	Super::OnPossessionChanged_Implementation();
+	Finished();
+	RefreshAbilitySystem();
 }

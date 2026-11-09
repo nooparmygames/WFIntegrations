@@ -20,6 +20,7 @@ class WFINTEGRATIONS_API UWFReleaseSmartObjectAction : public UWFAction
 
 public:
 	virtual void OnBeginPlay_Implementation() override;
+	virtual void OnPossessionChanged_Implementation() override;
 	virtual void OnActivate_Implementation() override;
 
 public:

@@ -2,6 +2,7 @@
 
 
 #include "WFUseGameplayBehaviorSmartObjectAction.h"
+#include "WFAITask_UseGameplayBehaviorSmartObject.h"
 #include "SmartObjectSubsystem.h"
 #include "SmartObjectRequestTypes.h"
 #include "SmartObjectBlueprintFunctionLibrary.h"
@@ -19,6 +20,7 @@ UWFUseGameplayBehaviorSmartObjectAction::UWFUseGameplayBehaviorSmartObjectAction
 
 void UWFUseGameplayBehaviorSmartObjectAction::OnActivate_Implementation()
 {
+	Cleanup();
 	Super::OnActivate_Implementation();
 
 	bOwnsClaim = false;
@@ -38,6 +40,7 @@ void UWFUseGameplayBehaviorSmartObjectAction::OnActivate_Implementation()
 	Filter.BehaviorDefinitionClasses = BehaviorDefinitionClasses;
 	Filter.ActivityRequirements = ActivityRequirements;
 	Filter.UserTags = UserTags;
+	Filter.ClaimPriority = ClaimPriority;
 
 	const FVector Center = Self->GetActorLocation();
 	const FSmartObjectRequest Request(FBox::BuildAABB(Center, FVector(SearchRadius)), Filter);
@@ -57,9 +60,8 @@ void UWFUseGameplayBehaviorSmartObjectAction::OnActivate_Implementation()
 	}
 	bOwnsClaim = true;
 
-	UAITask_UseGameplayBehaviorSmartObject* NewTask = bMoveToSlot
-		? UAITask_UseGameplayBehaviorSmartObject::MoveToAndUseSmartObjectWithGameplayBehavior(Controller, ClaimHandle, bLockAILogic, ClaimPriority)
-		: UAITask_UseGameplayBehaviorSmartObject::UseSmartObjectWithGameplayBehavior(Controller, ClaimHandle, bLockAILogic, ClaimPriority);
+	UAITask_UseGameplayBehaviorSmartObject* NewTask = UWFAITask_UseGameplayBehaviorSmartObject::Create(
+		*Controller, ClaimHandle, bMoveToSlot, bLockAILogic);
 
 	if (!IsValid(NewTask))
 	{
@@ -88,21 +90,38 @@ void UWFUseGameplayBehaviorSmartObjectAction::TickAction_Implementation(float De
 void UWFUseGameplayBehaviorSmartObjectAction::OnDeactivate_Implementation()
 {
 	Super::OnDeactivate_Implementation();
+	Cleanup();
+}
 
-	// Cancelling the task triggers its OnDestroy, which frees the claim it owns.
-	if (Task.IsValid() && !Task->IsFinished())
-		Task->ExternalCancel();
+void UWFUseGameplayBehaviorSmartObjectAction::Cleanup()
+{
+	UAITask_UseGameplayBehaviorSmartObject* OldTask = Task.Get();
 	Task.Reset();
-
-	// Only free the claim ourselves if the task never took ownership of it.
-	if (bOwnsClaim && ClaimHandle.IsValid())
-		USmartObjectBlueprintFunctionLibrary::MarkSmartObjectSlotAsFree(GetControlledActor(), ClaimHandle);
+	const FSmartObjectClaimHandle OldClaim = ClaimHandle;
+	const bool bReleaseClaim = bOwnsClaim;
 	ClaimHandle.Invalidate();
 	bOwnsClaim = false;
+
+	// The integration task aborts its original avatar's behavior, then the engine
+	// releases the task's claim. Detach first because behavior cleanup can reenter.
+	if (IsValid(OldTask) && !OldTask->IsFinished())
+		OldTask->ExternalCancel();
+
+	// Only free the claim ourselves if the task never took ownership of it.
+	if (bReleaseClaim && OldClaim.IsValid() && IsValid(Subsystem))
+		Subsystem->MarkSlotAsFree(OldClaim);
 }
 
 void UWFUseGameplayBehaviorSmartObjectAction::OnBeginPlay_Implementation()
 {
 	Super::OnBeginPlay_Implementation();
+	Subsystem = USmartObjectSubsystem::GetCurrent(GetWorld());
+}
+
+void UWFUseGameplayBehaviorSmartObjectAction::OnPossessionChanged_Implementation()
+{
+	Super::OnPossessionChanged_Implementation();
+	Finished();
+	Cleanup();
 	Subsystem = USmartObjectSubsystem::GetCurrent(GetWorld());
 }

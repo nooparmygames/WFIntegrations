@@ -43,6 +43,8 @@ public class WFIntegrations : ModuleRules
                 "CoreUObject",
                 "Engine",
                 "GameplayTasks",
+                "NavigationSystem",
+                "GameplayBehaviorsModule",
                 "GameplayBehaviorSmartObjectsModule",
                 "Slate",
                 "SlateCore",

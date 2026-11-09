@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "WFAction.h"
+#include "AITypes.h"
 #include "GameplayTagContainer.h"
 #include "SmartObjectTypes.h"
 #include "SmartObjectRuntime.h"
@@ -12,6 +13,8 @@
 class USmartObjectSubsystem;
 class USmartObjectBehaviorDefinition;
 class UBlackboardComponent;
+class UPathFollowingComponent;
+struct FPathFollowingResult;
 
 /**
  * Full reserve -> move -> occupy -> wait -> release lifecycle for a Smart Object, driven by the utility brain.
@@ -32,6 +35,7 @@ public:
 	UWFUseSmartObjectAction();
 
 	virtual void OnBeginPlay_Implementation() override;
+	virtual void OnPossessionChanged_Implementation() override;
 	virtual void OnActivate_Implementation() override;
 	virtual void TickAction_Implementation(float DeltaTime) override;
 	virtual void OnDeactivate_Implementation() override;
@@ -53,7 +57,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WiseFeline|SmartObject")
 	float SearchRadius = 1000.0f;
 
-	/** Priority used when this action claims a slot itself. */
+	/** Search and claim priority when reserving a slot itself. Higher priority cannot replace occupied slots. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WiseFeline|SmartObject")
 	ESmartObjectClaimPriority ClaimPriority = ESmartObjectClaimPriority::Normal;
 
@@ -84,6 +88,19 @@ protected:
 	TObjectPtr<UBlackboardComponent> Blackboard;
 
 private:
+	/** Releases the resources from this activation before ownership is refreshed. */
+	void Cleanup();
+	void StopOwnedMovement();
+	void OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result);
+	void OnSlotEvent(const FSmartObjectEventData& Event);
+	FDelegateHandle SlotEventHandle;
+
+	TWeakObjectPtr<UPathFollowingComponent> MovePathFollowing;
+	FDelegateHandle MoveFinishedHandle;
+	FAIRequestID MoveRequestID = FAIRequestID::InvalidRequest;
+	TWeakObjectPtr<UBlackboardComponent> ClaimBlackboard;
+	FName PublishedClaimKey = NAME_None;
+
 	/** Marks the slot occupied and starts the use timer. */
 	void BeginUsing();
 

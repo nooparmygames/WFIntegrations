@@ -2,12 +2,16 @@
 
 
 #include "WFReleaseSmartObjectAction.h"
+#include "WFUtilities.h"
 #include "SmartObjectRuntime.h"
 #include "SmartObjectBlueprintFunctionLibrary.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
 void UWFReleaseSmartObjectAction::OnActivate_Implementation()
 {
+	// Blackboard setup can finish after possession. Resolve it again before use.
+	Blackboard = WFUtilities::FindBlackboardComponent(GetControlledActor());
+
 	Super::OnActivate_Implementation();
 
 	AActor* Self = GetControlledActor();
@@ -17,7 +21,9 @@ void UWFReleaseSmartObjectAction::OnActivate_Implementation()
 		if (Claim.IsValid())
 		{
 			USmartObjectBlueprintFunctionLibrary::MarkSmartObjectSlotAsFree(Self, Claim);
-			USmartObjectBlueprintFunctionLibrary::SetValueAsSOClaimHandle(Blackboard, ClaimHandleKey, FSmartObjectClaimHandle::InvalidHandle);
+			// Release listeners and blackboard observers can publish a new claim synchronously.
+			if (USmartObjectBlueprintFunctionLibrary::GetValueAsSOClaimHandle(Blackboard, ClaimHandleKey) == Claim)
+				USmartObjectBlueprintFunctionLibrary::SetValueAsSOClaimHandle(Blackboard, ClaimHandleKey, FSmartObjectClaimHandle::InvalidHandle);
 		}
 	}
 
@@ -27,6 +33,11 @@ void UWFReleaseSmartObjectAction::OnActivate_Implementation()
 void UWFReleaseSmartObjectAction::OnBeginPlay_Implementation()
 {
 	Super::OnBeginPlay_Implementation();
-	if (IsValid(GetControlledActor()))
-		Blackboard = GetControlledActor()->FindComponentByClass<UBlackboardComponent>();
+	Blackboard = WFUtilities::FindBlackboardComponent(GetControlledActor());
+}
+
+void UWFReleaseSmartObjectAction::OnPossessionChanged_Implementation()
+{
+	Super::OnPossessionChanged_Implementation();
+	Blackboard = WFUtilities::FindBlackboardComponent(GetControlledActor());
 }

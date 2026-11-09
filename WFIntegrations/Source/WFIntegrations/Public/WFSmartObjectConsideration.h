@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "WFConsideration.h"
 #include "GameplayTagContainer.h"
+#include "SmartObjectTypes.h"
 #include "WFSmartObjectConsideration.generated.h"
 
 class USmartObjectSubsystem;
@@ -28,6 +29,7 @@ class WFINTEGRATIONS_API UWFSmartObjectConsideration : public UWFConsideration
 public:
 
 	virtual void OnBeginPlay_Implementation() override;
+	virtual void OnPossessionChanged_Implementation() override;
 	virtual float GetValue_Implementation(const AActor* InTargetActor) override;
 
 public:
@@ -47,6 +49,10 @@ public:
 	/** Search half-extent (radius) around the controlled actor, in cm. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WiseFeline|SmartObject")
 	float SearchRadius = 1000.0f;
+
+	/** Search priority. Match the claiming action; higher priority can replace reservations, but never occupied slots. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WiseFeline|SmartObject")
+	ESmartObjectClaimPriority ClaimPriority = ESmartObjectClaimPriority::Normal;
 
 	/** If true the score scales with distance (closer is higher). If false it returns 1 whenever any object is found. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WiseFeline|SmartObject")

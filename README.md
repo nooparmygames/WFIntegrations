@@ -11,7 +11,22 @@ Every download is the fully precompiled plugin - editor binaries plus Developmen
 game binaries - so a Blueprint-only project can use it in the editor *and* package a game with no
 C++ compiler installed.
 
-The links below point to the newly built binaries for the Wise Feline 3.2 release.
+### WFIntegrations 1.1.0
+
+Use Wise Feline Utility AI 3.3.0 (Lite or Ultimate) and Wise Feline Influence Maps 3.2.1.
+These are the versions used to build and verify the downloads.
+
+| Engine | Windows download |
+|---|---|
+| UE 5.8 | [wfint58110.zip](https://downloads.nooparmygames.com/releases/3.3.0/integrations/wfint58110.zip) |
+| UE 5.7 | [wfint57110.zip](https://downloads.nooparmygames.com/releases/3.3.0/integrations/wfint57110.zip) |
+| UE 5.6 | [wfint56110.zip](https://downloads.nooparmygames.com/releases/3.3.0/integrations/wfint56110.zip) |
+
+See [what changed in 1.1.0](WFIntegrations/README.md#110---2026-11-09).
+
+### WFIntegrations 1.0 for the Wise Feline 3.2 release
+
+Use these original downloads if your project is still on the 3.2 release.
 
 | Engine | Download |
 |---|---|
@@ -25,8 +40,7 @@ Two things worth knowing:
 
 - The precompiled binaries are **Windows (Win64) only**. The plugin supports Linux, Mac, Android and
   iOS as well, but those are built from source, so targeting them needs a C++ project and a compiler.
-- Pick the download that matches your engine's **minor** version. Each one works with every hotfix of
-  that version, so the 5.7 download is good for any 5.7.x.
+- Pick the download that matches your engine's **minor** version. The 5.7 archive is for UE 5.7.x.
 
 ## Dependencies
 
@@ -59,9 +73,10 @@ and enabled for the plugin to load:
 
 ### Influence Maps
 
+- **Move to Influence Map Value** (action) - selects a destination from an influence map once, then follows a complete NavMesh path. [Setup and fallback behavior](WFIntegrations/README.md#move-to-an-influence-map-result).
 - **Influence Map** (consideration) - searches a Wise Feline Influence Map for a value (centered on the controlled actor or a blackboard location) and writes the result to a blackboard key.
 
-The current source adds a `SearchMode` setting. `FirstMatch` keeps the previous behavior and is
+The `SearchMode` setting controls which cell is selected. `FirstMatch` keeps the previous behavior and is
 the default. `HighestValue` and `LowestValue` find the area's best value, choosing the cell nearest
 the search center when several cells share it. The selected value must still meet `SearchCondition`
 and `SearchValue`; if it does not, the consideration returns 0. These modes also work with interest

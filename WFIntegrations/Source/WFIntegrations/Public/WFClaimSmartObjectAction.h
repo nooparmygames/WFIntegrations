@@ -27,6 +27,7 @@ class WFINTEGRATIONS_API UWFClaimSmartObjectAction : public UWFAction
 
 public:
 	virtual void OnBeginPlay_Implementation() override;
+	virtual void OnPossessionChanged_Implementation() override;
 	virtual void OnActivate_Implementation() override;
 
 public:
@@ -46,7 +47,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WiseFeline|SmartObject")
 	float SearchRadius = 1000.0f;
 
-	/** Priority used when claiming a slot. Higher priority claims can steal lower priority ones. */
+	/** Search and claim priority. Higher priority can replace reservations, but never occupied slots. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WiseFeline|SmartObject")
 	ESmartObjectClaimPriority ClaimPriority = ESmartObjectClaimPriority::Normal;
 

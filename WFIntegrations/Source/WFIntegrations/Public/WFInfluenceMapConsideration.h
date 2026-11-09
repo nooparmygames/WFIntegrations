@@ -44,6 +44,7 @@ class WFINTEGRATIONS_API UWFInfluenceMapConsideration : public UWFConsideration
 public:
 
 	virtual void OnBeginPlay_Implementation() override;
+	virtual void OnPossessionChanged_Implementation() override;
 	float GetValue_Implementation(const AActor* InTargetActor) override;
 
 public:

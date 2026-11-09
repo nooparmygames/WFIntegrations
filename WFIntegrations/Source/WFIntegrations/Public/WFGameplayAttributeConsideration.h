@@ -22,6 +22,7 @@ class WFINTEGRATIONS_API UWFGameplayAttributeConsideration : public UWFConsidera
 public:
 
 	virtual void OnBeginPlay_Implementation() override;
+	virtual void OnPossessionChanged_Implementation() override;
 	virtual float GetValue_Implementation(const AActor* InTargetActor) override;
 
 public:

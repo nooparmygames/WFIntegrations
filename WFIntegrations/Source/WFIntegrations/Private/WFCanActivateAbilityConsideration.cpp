@@ -10,9 +10,10 @@
 
 float UWFCanActivateAbilityConsideration::GetValue_Implementation(const AActor* InTargetActor)
 {
-	// Late-fetch the ASC in case it was not ready at begin play.
-	if (!IsValid(AbilitySystem) && IsValid(GetControlledActor()))
-		AbilitySystem = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetControlledActor());
+	// Resolve the current actor each time, including components added after possession.
+	AbilitySystem = IsValid(GetControlledActor())
+		? UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetControlledActor())
+		: nullptr;
 
 	bool bCanActivate = false;
 	if (IsValid(AbilitySystem) && AbilityClass != nullptr)
@@ -30,6 +31,16 @@ float UWFCanActivateAbilityConsideration::GetValue_Implementation(const AActor* 
 
 void UWFCanActivateAbilityConsideration::OnBeginPlay_Implementation()
 {
-	if (IsValid(GetControlledActor()))
-		AbilitySystem = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetControlledActor());
+	Super::OnBeginPlay_Implementation();
+	AbilitySystem = IsValid(GetControlledActor())
+		? UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetControlledActor())
+		: nullptr;
+}
+
+void UWFCanActivateAbilityConsideration::OnPossessionChanged_Implementation()
+{
+	Super::OnPossessionChanged_Implementation();
+	AbilitySystem = IsValid(GetControlledActor())
+		? UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetControlledActor())
+		: nullptr;
 }

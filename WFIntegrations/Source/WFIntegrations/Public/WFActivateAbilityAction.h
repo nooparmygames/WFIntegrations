@@ -21,6 +21,7 @@ class WFINTEGRATIONS_API UWFActivateAbilityAction : public UWFAction
 
 public:
 	virtual void OnBeginPlay_Implementation() override;
+	virtual void OnPossessionChanged_Implementation() override;
 	virtual void OnActivate_Implementation() override;
 	virtual void OnDeactivate_Implementation() override;
 
@@ -45,5 +46,8 @@ protected:
 	TObjectPtr<UAbilitySystemComponent> AbilitySystem;
 
 private:
+	void RefreshAbilitySystem();
+	void UnbindAbilityEnded();
+
 	FDelegateHandle AbilityEndedHandle;
 };

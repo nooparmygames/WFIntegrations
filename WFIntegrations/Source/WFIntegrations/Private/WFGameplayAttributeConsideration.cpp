@@ -8,9 +8,10 @@
 
 float UWFGameplayAttributeConsideration::GetValue_Implementation(const AActor* InTargetActor)
 {
-	// Late-fetch the ASC in case it was not ready at begin play.
-	if (!IsValid(AbilitySystem) && IsValid(GetControlledActor()))
-		AbilitySystem = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetControlledActor());
+	// Resolve the current actor each time, including components added after possession.
+	AbilitySystem = IsValid(GetControlledActor())
+		? UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetControlledActor())
+		: nullptr;
 
 	if (!IsValid(AbilitySystem) || !Attribute.IsValid())
 		return 0.0f;
@@ -37,6 +38,16 @@ float UWFGameplayAttributeConsideration::GetValue_Implementation(const AActor* I
 
 void UWFGameplayAttributeConsideration::OnBeginPlay_Implementation()
 {
-	if (IsValid(GetControlledActor()))
-		AbilitySystem = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetControlledActor());
+	Super::OnBeginPlay_Implementation();
+	AbilitySystem = IsValid(GetControlledActor())
+		? UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetControlledActor())
+		: nullptr;
+}
+
+void UWFGameplayAttributeConsideration::OnPossessionChanged_Implementation()
+{
+	Super::OnPossessionChanged_Implementation();
+	AbilitySystem = IsValid(GetControlledActor())
+		? UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetControlledActor())
+		: nullptr;
 }

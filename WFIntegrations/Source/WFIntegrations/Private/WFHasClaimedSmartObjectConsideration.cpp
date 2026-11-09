@@ -2,6 +2,8 @@
 
 
 #include "WFHasClaimedSmartObjectConsideration.h"
+#include "WFUtilities.h"
+#include "WFSmartObjectUtilities.h"
 #include "SmartObjectSubsystem.h"
 #include "SmartObjectRuntime.h"
 #include "SmartObjectBlueprintFunctionLibrary.h"
@@ -9,6 +11,9 @@
 
 float UWFHasClaimedSmartObjectConsideration::GetValue_Implementation(const AActor* InTargetActor)
 {
+	// Blackboard setup can finish after possession. Resolve it again before use.
+	Blackboard = WFUtilities::FindBlackboardComponent(GetControlledActor());
+
 	bool bHasClaim = false;
 
 	if (IsValid(Blackboard) && ClaimHandleKey != NAME_None)
@@ -18,7 +23,7 @@ float UWFHasClaimedSmartObjectConsideration::GetValue_Implementation(const AActo
 
 		// A handle can be non-empty but reference a slot that has since been invalidated.
 		if (bHasClaim && bValidateWithSubsystem && IsValid(Subsystem))
-			bHasClaim = Subsystem->IsClaimedSmartObjectValid(Claim);
+			bHasClaim = WFSmartObjectUtilities::HasLiveSlot(Subsystem, Claim);
 	}
 
 	const bool bResult = bInvert ? !bHasClaim : bHasClaim;
@@ -27,7 +32,14 @@ float UWFHasClaimedSmartObjectConsideration::GetValue_Implementation(const AActo
 
 void UWFHasClaimedSmartObjectConsideration::OnBeginPlay_Implementation()
 {
+	Super::OnBeginPlay_Implementation();
 	Subsystem = USmartObjectSubsystem::GetCurrent(GetWorld());
-	if (IsValid(GetControlledActor()))
-		Blackboard = GetControlledActor()->FindComponentByClass<UBlackboardComponent>();
+	Blackboard = WFUtilities::FindBlackboardComponent(GetControlledActor());
+}
+
+void UWFHasClaimedSmartObjectConsideration::OnPossessionChanged_Implementation()
+{
+	Super::OnPossessionChanged_Implementation();
+	Subsystem = USmartObjectSubsystem::GetCurrent(GetWorld());
+	Blackboard = WFUtilities::FindBlackboardComponent(GetControlledActor());
 }

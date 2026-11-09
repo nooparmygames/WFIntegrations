@@ -2,6 +2,7 @@
 
 
 #include "WFSmartObjectConsideration.h"
+#include "WFUtilities.h"
 #include "SmartObjectSubsystem.h"
 #include "SmartObjectRequestTypes.h"
 #include "BehaviorTree/BlackboardComponent.h"
@@ -9,6 +10,9 @@
 
 float UWFSmartObjectConsideration::GetValue_Implementation(const AActor* InTargetActor)
 {
+	// Blackboard setup can finish after possession. Resolve it again before use.
+	Blackboard = WFUtilities::FindBlackboardComponent(GetControlledActor());
+
 	const AActor* Self = GetControlledActor();
 	if (!IsValid(Subsystem) || !IsValid(Self) || SearchRadius <= 0.0f)
 		return 0.0f;
@@ -19,6 +23,7 @@ float UWFSmartObjectConsideration::GetValue_Implementation(const AActor* InTarge
 	Filter.BehaviorDefinitionClasses = BehaviorDefinitionClasses;
 	Filter.ActivityRequirements = ActivityRequirements;
 	Filter.UserTags = UserTags;
+	Filter.ClaimPriority = ClaimPriority;
 
 	const FSmartObjectRequest Request(FBox::BuildAABB(Center, FVector(SearchRadius)), Filter);
 	const FSmartObjectRequestResult Result = Subsystem->FindSmartObject(Request, Self);
@@ -40,7 +45,14 @@ float UWFSmartObjectConsideration::GetValue_Implementation(const AActor* InTarge
 
 void UWFSmartObjectConsideration::OnBeginPlay_Implementation()
 {
+	Super::OnBeginPlay_Implementation();
 	Subsystem = USmartObjectSubsystem::GetCurrent(GetWorld());
-	if (IsValid(GetControlledActor()))
-		Blackboard = GetControlledActor()->FindComponentByClass<UBlackboardComponent>();
+	Blackboard = WFUtilities::FindBlackboardComponent(GetControlledActor());
+}
+
+void UWFSmartObjectConsideration::OnPossessionChanged_Implementation()
+{
+	Super::OnPossessionChanged_Implementation();
+	Subsystem = USmartObjectSubsystem::GetCurrent(GetWorld());
+	Blackboard = WFUtilities::FindBlackboardComponent(GetControlledActor());
 }

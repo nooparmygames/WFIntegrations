@@ -31,6 +31,7 @@ public:
 	UWFUseGameplayBehaviorSmartObjectAction();
 
 	virtual void OnBeginPlay_Implementation() override;
+	virtual void OnPossessionChanged_Implementation() override;
 	virtual void OnActivate_Implementation() override;
 	virtual void TickAction_Implementation(float DeltaTime) override;
 	virtual void OnDeactivate_Implementation() override;
@@ -52,7 +53,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WiseFeline|SmartObject")
 	float SearchRadius = 1000.0f;
 
-	/** Priority used when claiming the slot. */
+	/** Search and claim priority. Higher priority can replace reservations, but never occupied slots. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WiseFeline|SmartObject")
 	ESmartObjectClaimPriority ClaimPriority = ESmartObjectClaimPriority::Normal;
 
@@ -69,6 +70,8 @@ protected:
 	TObjectPtr<USmartObjectSubsystem> Subsystem;
 
 private:
+	void Cleanup();
+
 	/** The engine task performing the move + gameplay behavior. */
 	TWeakObjectPtr<UAITask_UseGameplayBehaviorSmartObject> Task;
 

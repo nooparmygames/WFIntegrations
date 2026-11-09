@@ -1,7 +1,7 @@
 {
   "FileVersion": 3,
-  "Version": 1,
-  "VersionName": "1.0",
+  "Version": 2,
+  "VersionName": "1.1.0",
   "FriendlyName": "WF Integrations",
   "Description": "Integrations of different Wise Feline products with each other",
   "Category": "Other",
@@ -14,6 +14,16 @@
   "CanContainContent": true,
   "Installed": true,
   "Modules": [
+    {
+      "Name": "WFIntegrationsTests",
+      "Type": "Editor",
+      "LoadingPhase": "PostEngineInit",
+      "PlatformAllowList": [
+        "Win64",
+        "Linux",
+        "Mac"
+      ]
+    },
     {
       "Name": "WFIntegrations",
       "Type": "Runtime",
@@ -33,12 +43,12 @@
     {
       "Name": "WiseFeline",
       "Enabled": true,
-      "MarketplaceURL": "com.epicgames.launcher://ue/Fab/product/3e2af863-d8f8-43c8-83e3-f888cf59357b"
+      "MarketplaceURL": "https://www.fab.com/listings/3e2af863-d8f8-43c8-83e3-f888cf59357b"
     },
     {
       "Name": "WiseFelineInfluenceMaps",
       "Enabled": true,
-      "MarketplaceURL": "com.epicgames.launcher://ue/Fab/product/889ea19e-5903-4a98-9473-8fba954e0d3c"
+      "MarketplaceURL": "https://www.fab.com/listings/889ea19e-5903-4a98-9473-8fba954e0d3c"
     },
     {
       "Name": "SmartObjects",

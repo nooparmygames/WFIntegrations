@@ -2,6 +2,7 @@
 
 
 #include "WFInfluenceMapConsideration.h"
+#include "WFUtilities.h"
 #include "WFInfluenceMapsSubsystem.h"
 #include "WFInfluenceMap.h"
 #include "BehaviorTree/BlackboardComponent.h"
@@ -25,17 +26,23 @@ namespace
 
 float UWFInfluenceMapConsideration::GetValue_Implementation(const AActor* InTargetActor)
 {
+	// Blackboard setup can finish after possession. Resolve it again before use.
+	Blackboard = WFUtilities::FindBlackboardComponent(GetControlledActor());
+
 	//For some reason WFInfluenceMaps subsystem is not available. should not happen
-	if (Subsystem == nullptr)
+	if (!IsValid(Subsystem) || !IsValid(GetControlledActor()))
 	{
 		return 0;
 	}
 
 	AWFInfluenceMap* Map = Subsystem->GetMap(MapName);
-	if (Map == nullptr)//Map name is wrong
+	if (!IsValid(Map)) // Map name is wrong
 	{
 		return 0;
 	}
+
+	if ((SearchCenterMode == ECenterMode::BlackboardKey || KeyNameForResult != NAME_None) && !IsValid(Blackboard))
+		return 0.0f;
 
 	FVector Result;
 	FVector Center;
@@ -45,7 +52,6 @@ float UWFInfluenceMapConsideration::GetValue_Implementation(const AActor* InTarg
 	}
 	else
 	{
-		check(Blackboard != nullptr);
 		Center = Blackboard->GetValueAsVector(SearchCenterKey);
 	}
 
@@ -104,7 +110,6 @@ float UWFInfluenceMapConsideration::GetValue_Implementation(const AActor* InTarg
 
 	if (KeyNameForResult != NAME_None)
 	{
-		check(Blackboard != nullptr);
 		Blackboard->SetValueAsVector(KeyNameForResult, Result);
 	}
 	return 1;
@@ -112,6 +117,14 @@ float UWFInfluenceMapConsideration::GetValue_Implementation(const AActor* InTarg
 
 void UWFInfluenceMapConsideration::OnBeginPlay_Implementation()
 {
+	Super::OnBeginPlay_Implementation();
 	Subsystem = UWFInfluenceMapsSubsystem::Get(GetWorld());
-	Blackboard = GetControlledActor()->FindComponentByClass<UBlackboardComponent>();
+	Blackboard = WFUtilities::FindBlackboardComponent(GetControlledActor());
+}
+
+void UWFInfluenceMapConsideration::OnPossessionChanged_Implementation()
+{
+	Super::OnPossessionChanged_Implementation();
+	Subsystem = UWFInfluenceMapsSubsystem::Get(GetWorld());
+	Blackboard = WFUtilities::FindBlackboardComponent(GetControlledActor());
 }
