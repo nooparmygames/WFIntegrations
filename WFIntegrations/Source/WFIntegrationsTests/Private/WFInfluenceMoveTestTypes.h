@@ -23,6 +23,8 @@ class UWFInfluenceMoveTestPathFollowing : public UPathFollowingComponent
 public:
     bool bCompleteDuringRequest = false;
     bool bReplaceDuringRequest = false;
+    TFunction<void()> QueryHook;
+    virtual void OnPathfindingQuery(FPathFindingQuery& Query) override;
     virtual FAIRequestID RequestMove(const FAIMoveRequest& RequestData, FNavPathSharedPtr InPath) override;
 };
 
@@ -33,6 +35,8 @@ class AWFInfluenceMoveTestController : public AAIController
 public:
     AWFInfluenceMoveTestController(const FObjectInitializer& Initializer);
     bool bFindPath = true;
+    bool bReturnPartialPath = false;
+    mutable int32 PathSearches = 0;
     mutable bool bAllowedPartialPath = true;
     virtual void FindPathForMoveRequest(const FAIMoveRequest& MoveRequest, FPathFindingQuery& Query,
         FNavPathSharedPtr& OutPath) const override;

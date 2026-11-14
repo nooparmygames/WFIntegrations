@@ -18,11 +18,13 @@ AWFInfluenceMoveTestController::AWFInfluenceMoveTestController(const FObjectInit
 void AWFInfluenceMoveTestController::FindPathForMoveRequest(const FAIMoveRequest& MoveRequest,
     FPathFindingQuery& Query, FNavPathSharedPtr& OutPath) const
 {
+    ++PathSearches;
     bAllowedPartialPath = MoveRequest.IsUsingPartialPaths();
     if (!bFindPath) return;
     OutPath = MakeShared<FNavigationPath, ESPMode::ThreadSafe>();
     OutPath->GetPathPoints().Add(FNavPathPoint(Query.StartLocation));
     OutPath->GetPathPoints().Add(FNavPathPoint(Query.EndLocation));
+    OutPath->SetIsPartial(bReturnPartialPath);
     OutPath->MarkReady();
     OutPath->DoneUpdating(ENavPathUpdateType::NavigationChanged);
 }
@@ -38,4 +40,14 @@ FAIRequestID UWFInfluenceMoveTestPathFollowing::RequestMove(const FAIMoveRequest
         CastChecked<AAIController>(GetOwner())->MoveToLocation(FVector(1800, 1800, 0), 20.0f);
     }
     return Result;
+}
+
+void UWFInfluenceMoveTestPathFollowing::OnPathfindingQuery(FPathFindingQuery& Query)
+{
+    Super::OnPathfindingQuery(Query);
+    if (QueryHook)
+    {
+        const TFunction<void()> Callback = MoveTemp(QueryHook);
+        Callback();
+    }
 }

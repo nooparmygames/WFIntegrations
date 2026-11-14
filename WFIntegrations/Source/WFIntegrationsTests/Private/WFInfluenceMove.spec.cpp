@@ -240,6 +240,122 @@ void FWFInfluenceMoveSpec::Define()
         TestFalse(TEXT("Failure is exposed"), Action->bMoveSucceeded);
     });
 
+    It("keeps the same request through small score swings and replans only after both stability gates", [this]()
+    {
+        if (!bReady) return;
+        Action->bReplanWhileMoving = true;
+        Action->ReplanInterval = 0.5f;
+        Action->MinimumReplanImprovement = 1.0f;
+        Action->MinimumReplanDisplacement = 150.0f;
+        Activate();
+        TestTrue(TEXT("Opt-in action enables ticking while moving"), Action->bShouldTick);
+        ExpectDestination(3, 1);
+        const FAIRequestID Initial = Path->GetCurrentRequestId();
+        const int32 Searches = Controller->PathSearches;
+        Map->SetCellValue(4, 4, 11.0f);
+        Action->TickAction_Implementation(0.5f);
+        TestTrue(TEXT("Exact score margin keeps the request"), Path->GetCurrentRequestId() == Initial);
+        TestEqual(TEXT("Retaining skips a navigation search"), Controller->PathSearches, Searches);
+
+        Map->SetCellValue(4, 1, 13.0f);
+        Action->TickAction_Implementation(0.5f);
+        TestTrue(TEXT("Too near to switch"), Path->GetCurrentRequestId() == Initial);
+        Map->SetCellValue(4, 4, 14.0f);
+        Action->TickAction_Implementation(0.25f);
+        TestTrue(TEXT("Replan waits for interval"), Path->GetCurrentRequestId() == Initial);
+        Controller->bAllowStrafe = true;
+        Action->TickAction_Implementation(0.25f);
+        ExpectDestination(4, 4);
+        TestTrue(TEXT("The replacement is a new active request"), Path->GetCurrentRequestId() != Initial && Action->IsActive());
+        TestEqual(TEXT("Searches only one path for an accepted replacement"), Controller->PathSearches, Searches + 1);
+        TestFalse(TEXT("Partial path disabled during replacement"), Controller->bAllowedPartialPath);
+        TestFalse(TEXT("Replaces stale strafing mode on successful adoption"), Controller->bAllowStrafe);
+    });
+
+    It("keeps a usable request when replacement projection or path fails and drops an ineligible goal", [this]()
+    {
+        if (!bReady) return;
+        Action->bReplanWhileMoving = true;
+        Activate();
+        const FAIRequestID Initial = Path->GetCurrentRequestId();
+        Map->SetCellValue(4, 4, 20);
+        NavData->bProject = false;
+        Action->TickAction_Implementation(0.5f);
+        TestTrue(TEXT("Failed projection retains prior move"), Path->GetCurrentRequestId() == Initial && Action->IsActive());
+        NavData->bProject = true;
+        Controller->bReturnPartialPath = true;
+        Action->TickAction_Implementation(0.5f);
+        TestTrue(TEXT("Partial replacement retains prior move"), Path->GetCurrentRequestId() == Initial && Action->IsActive());
+        Controller->bReturnPartialPath = false;
+        Controller->bFindPath = false;
+        Map->SetCellValue(3, 1, 0);
+        Action->TickAction_Implementation(0.5f);
+        TestFalse(TEXT("Ineligible previous goal is abandoned"), Action->IsActive());
+        TestEqual(TEXT("Abandons only the owned request"), Path->GetStatus(), EPathFollowingStatus::Idle);
+        TestFalse(TEXT("No false arrival on path failure"), Action->bMoveSucceeded);
+    });
+
+    It("preserves a foreign request started by the replaced move's abort callback", [this]()
+    {
+        if (!bReady) return;
+        Action->bReplanWhileMoving = true;
+        Activate();
+        const FAIRequestID Initial = Path->GetCurrentRequestId();
+        FAIRequestID External = FAIRequestID::InvalidRequest;
+        const FDelegateHandle Handle = Path->OnRequestFinished.AddLambda([&](FAIRequestID Id, const FPathFollowingResult&)
+        {
+            if (Id == Initial)
+            {
+                Controller->MoveToLocation(FVector(1600, 1600, 100), 20.0f);
+                External = Path->GetCurrentRequestId();
+            }
+        });
+        Map->SetCellValue(4, 4, 20);
+        Action->TickAction_Implementation(0.5f);
+        Path->OnRequestFinished.Remove(Handle);
+        TestTrue(TEXT("Foreign movement is active and still owns its request"), External.IsValid()
+            && Path->GetCurrentRequestId() == External && Path->GetStatus() != EPathFollowingStatus::Idle);
+        TestFalse(TEXT("Stable action gives up control"), Action->IsActive());
+    });
+
+    It("handles synchronous arrival and unpossession in stable mode", [this]()
+    {
+        if (!bReady) return;
+        Action->bReplanWhileMoving = true;
+        Path->bCompleteDuringRequest = true;
+        Activate();
+        TestFalse(TEXT("Synchronous completion leaves no active action"), Action->IsActive());
+        TestTrue(TEXT("Observed completion is success"), Action->bMoveSucceeded);
+        Path->bCompleteDuringRequest = false;
+        Activate();
+        TestTrue(TEXT("Next activation owns a move"), Action->IsActive());
+        Controller->UnPossess();
+        TestFalse(TEXT("Possession loss stops replanning"), Action->IsActive());
+        TestEqual(TEXT("Possession loss cancels owned path"), Path->GetStatus(), EPathFollowingStatus::Idle);
+    });
+
+    It("does not pathfind after ownership changes during query construction", [this]()
+    {
+        if (!bReady) return;
+        Action->bReplanWhileMoving = true;
+        Path->QueryHook = [this] { Controller->UnPossess(); };
+        Activate();
+        TestEqual(TEXT("Stale activation skips pathfinding"), Controller->PathSearches, 0);
+        TestFalse(TEXT("Ownership lost before first request finishes the action"), Action->IsActive());
+        TestEqual(TEXT("No stale request starts"), Path->GetStatus(), EPathFollowingStatus::Idle);
+    });
+
+    It("does not adopt or cancel a foreign move dispatched during stable activation", [this]()
+    {
+        if (!bReady) return;
+        Action->bReplanWhileMoving = true;
+        Path->bReplaceDuringRequest = true;
+        Activate();
+        TestFalse(TEXT("Action did not adopt another owner's move"), Action->IsActive());
+        TestTrue(TEXT("Foreign move keeps running"), Path->GetCurrentRequestId().IsValid()
+            && Path->GetStatus() != EPathFollowingStatus::Idle);
+    });
+
     It("cancels its own request and preserves a newer external move", [this]()
     {
         if (!bReady) return;

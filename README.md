@@ -7,40 +7,23 @@ projects without a C++ compiler installed can use the plugin too.
 
 ## Downloads
 
-Every download is the fully precompiled plugin - editor binaries plus Development and Shipping
-game binaries - so a Blueprint-only project can use it in the editor *and* package a game with no
-C++ compiler installed.
+The WFIntegrations 3.5.0 builds require Wise Feline Utility AI 3.5.0 and
+Influence Maps 3.5.0. Choose the ZIP for your engine and Utility AI edition.
+Ultimate and Lite binaries cannot be interchanged.
 
-### WFIntegrations 1.1.0
+| Unreal Engine | Ultimate (Win64) | Lite (Win64) |
+| --- | --- | --- |
+| UE 5.8 | [wfint58350.zip](https://downloads.nooparmygames.com/releases/3.5.0/integrations/wfint58350.zip) | [wfintlite58350.zip](https://downloads.nooparmygames.com/releases/3.5.0/integrations/wfintlite58350.zip) |
+| UE 5.7 | [wfint57350.zip](https://downloads.nooparmygames.com/releases/3.5.0/integrations/wfint57350.zip) | [wfintlite57350.zip](https://downloads.nooparmygames.com/releases/3.5.0/integrations/wfintlite57350.zip) |
+| UE 5.6 | [wfint56350.zip](https://downloads.nooparmygames.com/releases/3.5.0/integrations/wfint56350.zip) | [wfintlite56350.zip](https://downloads.nooparmygames.com/releases/3.5.0/integrations/wfintlite56350.zip) |
 
-Use Wise Feline Utility AI 3.3.0 (Lite or Ultimate) and Wise Feline Influence Maps 3.2.1.
-These are the versions used to build and verify the downloads.
+Extract the ZIP into your project's `Plugins` folder so you have
+`Plugins/WFIntegrations`, then enable the plugin and restart Unreal.
+The Win64 ZIPs include Editor, Development and Shipping build products for
+Blueprint-only projects. For other platforms, compile the plugin from source
+against the matching dependencies.
 
-| Engine | Windows download |
-|---|---|
-| UE 5.8 | [wfint58110.zip](https://downloads.nooparmygames.com/releases/3.3.0/integrations/wfint58110.zip) |
-| UE 5.7 | [wfint57110.zip](https://downloads.nooparmygames.com/releases/3.3.0/integrations/wfint57110.zip) |
-| UE 5.6 | [wfint56110.zip](https://downloads.nooparmygames.com/releases/3.3.0/integrations/wfint56110.zip) |
-
-See [what changed in 1.1.0](WFIntegrations/README.md#110---2026-11-09).
-
-### WFIntegrations 1.0 for the Wise Feline 3.2 release
-
-Use these original downloads if your project is still on the 3.2 release.
-
-| Engine | Download |
-|---|---|
-| UE 5.8 | [wfint58100.zip](https://downloads.nooparmygames.com/releases/3.2.0/integrations/wfint58100.zip) |
-| UE 5.7 | [wfint57100.zip](https://downloads.nooparmygames.com/releases/3.2.0/integrations/wfint57100.zip) |
-| UE 5.6 | [wfint56100.zip](https://downloads.nooparmygames.com/releases/3.2.0/integrations/wfint56100.zip) |
-
-Unzip the download into your project's `Plugins` folder (so you end up with `Plugins/WFIntegrations`) and enable the plugin.
-
-Two things worth knowing:
-
-- The precompiled binaries are **Windows (Win64) only**. The plugin supports Linux, Mac, Android and
-  iOS as well, but those are built from source, so targeting them needs a C++ project and a compiler.
-- Pick the download that matches your engine's **minor** version. The 5.7 archive is for UE 5.7.x.
+See [what changed in 3.5.0](WFIntegrations/README.md#350).
 
 ## Dependencies
 
